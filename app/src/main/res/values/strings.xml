@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">My MovieApp</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_sort">Sort</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="Dark_gray">#8FAAA1</string>
+    <string name="Black">#8FAAA1</string>
+    <string name="Green">#8FAAA1</string>
+    <string name="White">#8FAAA1</string>
+    <string name="Orange">#8FAAA1</string>
+    <string name="LightBlue">#8FAAA1</string>
+    <string name="action_share">Share</string>
+
+    <string name="pref_color">color</string>
+
+    <string-array name="pref_units_values">
+        <item>@string/Black</item>
+        <item>@string/Green</item>
+        <item>@string/White</item>
+        <item>@string/Orange</item>
+        <item>@string/LightBlue</item>
+    </string-array>
+
+
+</resources>
