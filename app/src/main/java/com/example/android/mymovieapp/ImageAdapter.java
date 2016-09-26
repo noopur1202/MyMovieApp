@@ -6,28 +6,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 public class ImageAdapter extends ArrayAdapter {
 
     private String[] imageUrl;
+    private String[] imageText;
     private Context ctx;
     private LayoutInflater inflater;
 
-    public ImageAdapter(Context context, String[] imageUrl)
+    ImageView imageView;
+
+    public ImageAdapter(Context context, String[] images, String[] text,String[] imageUrl)
     {
-        super(context, R.layout.image_grid, imageUrl);
+        super(context, R.layout.image_grid,imageUrl);
         this.ctx = context;
         this.imageUrl = imageUrl;
+        this.imageText=imageText;
         inflater = LayoutInflater.from(context);
     }
-
-  /*  @Override
-    public int getCount()
-    {
-      return imageUrl.length;
-    }*/
 
     @Override
     public Object getItem(int position)
@@ -41,24 +40,49 @@ public class ImageAdapter extends ArrayAdapter {
         return position;
     }
 
+    public void setImageUrl(String[] imageUrl){
+        this.imageUrl=imageUrl;
+        notifyDataSetChanged();
+    }
+
+    public void setImageText(String[] imageText){
+        this.imageText=imageText;
+        notifyDataSetChanged();
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        ImageView iv;
+        ViewHolder holder;
 
-        iv=(ImageView)convertView;
-        if (iv == null)
-        {
-            iv=new ImageView(getContext());
-            iv.setScaleType(ImageView.ScaleType.FIT_XY);
+        if (null == convertView) {
             convertView = inflater.inflate(R.layout.image_grid, parent, false);
+            holder=new ViewHolder();
+            holder.titleTextView=(TextView)convertView.findViewById(R.id.image_text);
+            holder.imageView=(ImageView)convertView.findViewById(R.id.movieImage);
+            convertView.setTag(holder);
+        }else {
+            holder=(ViewHolder)convertView.getTag();
         }
 
         Picasso
                 .with(ctx)
                 .load(imageUrl[position])
-                .into(iv);
+                .fit()
+                .into(holder.imageView);
+
+        holder.titleTextView.setText();
+
+
+        //set a onclick listener for when the button gets clicked
 
         return convertView;
     }
+
+    static class ViewHolder {
+        TextView titleTextView;
+        ImageView imageView;
+    }
+
+
 }
