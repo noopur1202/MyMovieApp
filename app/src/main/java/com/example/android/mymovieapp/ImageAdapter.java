@@ -71,10 +71,7 @@ public class ImageAdapter extends ArrayAdapter {
                 .fit()
                 .into(holder.imageView);
 
-        holder.titleTextView.setText();
-
-
-        //set a onclick listener for when the button gets clicked
+        holder.titleTextView.setText("abc");
 
         return convertView;
     }
