@@ -33,17 +33,19 @@ public class MainActivityFragment extends Fragment {
         GridView gv1=(GridView)viewGroup.findViewById(R.id.grid_fragment);
         gv1.setAdapter(new ImageAdapter(getActivity(),images,text));
 
-        gv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gv1.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                Intent intent=new Intent(getActivity(),DetailActivity.class);
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+            {
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
                 startActivity(intent);
             }
         });
-
         return viewGroup;
     }
+
+
 
 
     public static String[] images = {

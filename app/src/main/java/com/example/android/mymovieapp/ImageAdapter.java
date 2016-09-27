@@ -19,14 +19,15 @@ public class ImageAdapter extends ArrayAdapter {
 
     ImageView imageView;
 
-    public ImageAdapter(Context context, String[] images, String[] text,String[] imageUrl)
+    public ImageAdapter(Context context,String[] imageUrl,String[] imageText)
     {
         super(context, R.layout.image_grid,imageUrl);
         this.ctx = context;
         this.imageUrl = imageUrl;
-        this.imageText=imageText;
+        this.imageText = imageText;
         inflater = LayoutInflater.from(context);
     }
+
 
     @Override
     public Object getItem(int position)
@@ -63,23 +64,19 @@ public class ImageAdapter extends ArrayAdapter {
             convertView.setTag(holder);
         }else {
             holder=(ViewHolder)convertView.getTag();
-        }
-
+            }
         Picasso
                 .with(ctx)
                 .load(imageUrl[position])
                 .fit()
                 .into(holder.imageView);
 
-        holder.titleTextView.setText("abc");
+        holder.titleTextView.setText(imageText[position]);
 
         return convertView;
     }
-
     static class ViewHolder {
         TextView titleTextView;
         ImageView imageView;
     }
-
-
 }
