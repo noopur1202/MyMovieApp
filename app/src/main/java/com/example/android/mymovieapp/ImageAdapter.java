@@ -17,8 +17,6 @@ public class ImageAdapter extends ArrayAdapter {
     private Context ctx;
     private LayoutInflater inflater;
 
-    ImageView imageView;
-
     public ImageAdapter(Context context,String[] imageUrl,String[] imageText)
     {
         super(context, R.layout.image_grid,imageUrl);
