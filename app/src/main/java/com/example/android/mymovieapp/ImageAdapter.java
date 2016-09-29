@@ -57,7 +57,7 @@ public class ImageAdapter extends ArrayAdapter {
         if (null == convertView) {
             convertView = inflater.inflate(R.layout.image_grid, parent, false);
             holder=new ViewHolder();
-            holder.titleTextView=(TextView)convertView.findViewById(R.id.image_text);
+            holder.imageText=(TextView)convertView.findViewById(R.id.image_text);
             holder.imageView=(ImageView)convertView.findViewById(R.id.movieImage);
             convertView.setTag(holder);
         }else {
@@ -69,12 +69,12 @@ public class ImageAdapter extends ArrayAdapter {
                 .fit()
                 .into(holder.imageView);
 
-        holder.titleTextView.setText(imageText[position]);
+        holder.imageText.setText(imageText[position]);
 
         return convertView;
     }
     static class ViewHolder {
-        TextView titleTextView;
+        TextView imageText;
         ImageView imageView;
     }
 }
