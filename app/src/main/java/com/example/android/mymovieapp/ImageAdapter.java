@@ -6,23 +6,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 public class ImageAdapter extends ArrayAdapter {
 
     private String[] imageUrl;
-    private String[] imageText;
     private Context ctx;
     private LayoutInflater inflater;
 
-    public ImageAdapter(Context context,String[] imageUrl,String[] imageText)
+    public ImageAdapter(Context context,String[] imageUrl)
     {
         super(context, R.layout.image_grid,imageUrl);
         this.ctx = context;
         this.imageUrl = imageUrl;
-        this.imageText = imageText;
         inflater = LayoutInflater.from(context);
     }
 
@@ -44,11 +41,6 @@ public class ImageAdapter extends ArrayAdapter {
         notifyDataSetChanged();
     }
 
-    public void setImageText(String[] imageText){
-        this.imageText=imageText;
-        notifyDataSetChanged();
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
@@ -57,7 +49,6 @@ public class ImageAdapter extends ArrayAdapter {
         if (null == convertView) {
             convertView = inflater.inflate(R.layout.image_grid, parent, false);
             holder=new ViewHolder();
-            holder.imageText=(TextView)convertView.findViewById(R.id.image_text);
             holder.imageView=(ImageView)convertView.findViewById(R.id.movieImage);
             convertView.setTag(holder);
         }else {
@@ -69,12 +60,9 @@ public class ImageAdapter extends ArrayAdapter {
                 .fit()
                 .into(holder.imageView);
 
-        holder.imageText.setText(imageText[position]);
-
         return convertView;
     }
     static class ViewHolder {
-        TextView imageText;
         ImageView imageView;
     }
 }

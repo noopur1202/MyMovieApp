@@ -2,14 +2,19 @@ package com.example.android.mymovieapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
+
+import org.json.JSONException;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -18,7 +23,6 @@ public class MainActivityFragment extends Fragment {
 
     public MainActivityFragment() {
     }
-    ImageView imageView;
 
     public static Fragment newInstance(Context context)
     {
@@ -31,7 +35,7 @@ public class MainActivityFragment extends Fragment {
     {
         final ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_main, null);
         GridView gv1=(GridView)viewGroup.findViewById(R.id.grid_fragment);
-        gv1.setAdapter(new ImageAdapter(getActivity(),images,text));
+        gv1.setAdapter(new ImageAdapter(getActivity(),images));
 
         gv1.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -45,7 +49,46 @@ public class MainActivityFragment extends Fragment {
         return viewGroup;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        switch(item.getItemId()) {
+            case R.id.action_refresh:
+     //           UpdateScreen();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return true;
+    }
+
+    public void UpdateScreen(){
+        FetchDetails movieFetch=new FetchDetails();
+        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sort_order=pref.getString("sort_order","Most_popular");
+        movieFetch.execute(sort_order);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        UpdateScreen();
+    }
+
+    public class FetchDetails extends AsyncTask<String, Void, String[]>{
+
+        private String getdataFromJson()throws JSONException{
+
+
+            return null;
+        }
+
+        @Override
+        protected String[] doInBackground(String... strings) {
+            return new String[0];
+        }
+    }
 
 
     public static String[] images = {
@@ -64,22 +107,4 @@ public class MainActivityFragment extends Fragment {
             "http://i.imgur.com/COzBnru.jpg",
             "http://i.imgur.com/Z3QjilA.jpg",
     };
-
-    public static String[] text = {
-            "Donut",
-            "Eclair",
-            "Froyo",
-            "Gingerbread",
-            "Honeycomb",
-            "Ice Cream Sandwich",
-            "Jelly Bean",
-            "KitKat",
-            "Lollipop",
-            "Marshmallow",
-            "Nougat",
-            "nxt",
-            "ok",
-            "new"
-    };
-
 }

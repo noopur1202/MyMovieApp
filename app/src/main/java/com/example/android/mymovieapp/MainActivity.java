@@ -1,6 +1,5 @@
 package com.example.android.mymovieapp;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -40,27 +39,19 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch(item.getItemId()) {
-            case R.id.action_settings:
-                Intent intent = new Intent(this,SettingsActivity.class);
-                this.startActivity(intent);
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-        return true;
-    }
-
     public void showPop()
     {
-        View menuItemView = findViewById(R.id.fab);
+        final View menuItemView = findViewById(R.id.fab);
         PopupMenu popup = new PopupMenu(MainActivity.this, menuItemView);
         MenuInflater inflate = popup.getMenuInflater();
         inflate.inflate(R.menu.sort_popup, popup.getMenu());
         popup.show();
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                menuItemView.setSelected(true);
+                return false;
+            }
+        });
     }
 }
