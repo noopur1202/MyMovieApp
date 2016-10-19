@@ -31,18 +31,11 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     ImageAdapter movieAdapter;
-    String[] moviePoster;
     List<String> posters;
     GridView gv;
 
     public MainActivityFragment() {
     }
-
-/*    public static Fragment newInstance(Context context)
-    {
-      MainActivityFragment a = new MainActivityFragment();
-      return a;
-    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -53,7 +46,6 @@ public class MainActivityFragment extends Fragment {
         movieAdapter = new ImageAdapter(getActivity(),posters);
         gv = (GridView) rootView.findViewById(R.id.grid_fragment);
         gv.setAdapter(movieAdapter);
-        movieAdapter.setNotifyOnChange(true);
 
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -190,56 +182,23 @@ public class MainActivityFragment extends Fragment {
         {
             JSONObject jsonObject=new JSONObject(json_string);
             JSONArray jsonArray=jsonObject.getJSONArray("results");
-       //     moviePoster=new String[jsonArray.length()];
 
             for (int i=0;i<jsonArray.length();i++)
             {
                 JSONObject movie_list=jsonArray.getJSONObject(i);
-                //moviePoster[i]=("http://image.tmdb.org/t/p/w185"+ movie_list.getString("poster_path"));
                 posters.add("http://image.tmdb.org/t/p/w185"+ movie_list.getString("poster_path"));
             }
-//            for (String s:moviePoster)
-//            {
-//                Log.v(LOG_TAG, "poster_path  " +s);
-//            }
             return posters;
         }
 
         @Override
         protected void onPostExecute(List<String> result)
         {
-            for (String r  : result) {
-                Log.v(LOG_TAG,"result " + r);
-
-            }
-            movieAdapter.add(result);
-  //          gv.setAdapter(movieAdapter);
-           // movieAdapter.setImageUrl(result);
-
-    /*        if (result!=null)
+            super.onPostExecute(result);
+            for (String r:result)
             {
-                Log.v(LOG_TAG,"result " + result[0]);
-
+                movieAdapter.add(r);
             }
-      */  }
-
+        }
     }
-
-/*
-    public static String[] images = {
-            "http://i.imgur.com/rFLNqWI.jpg",
-            "http://i.imgur.com/C9pBVt7.jpg",
-            "http://i.imgur.com/rT5vXE1.jpg",
-            "http://i.imgur.com/aIy5R2k.jpg",
-            "http://i.imgur.com/MoJs9pT.jpg",
-            "http://i.imgur.com/S963yEM.jpg",
-            "http://i.imgur.com/rLR2cyc.jpg",
-            "http://i.imgur.com/SEPdUIx.jpg",
-            "http://i.imgur.com/aC9OjaM.jpg",
-            "http://i.imgur.com/76Jfv9b.jpg",
-            "http://i.imgur.com/fUX7EIB.jpg",
-            "http://i.imgur.com/syELajx.jpg",
-            "http://i.imgur.com/COzBnru.jpg",
-            "http://i.imgur.com/Z3QjilA.jpg",
-    };*/
 }

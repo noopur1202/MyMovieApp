@@ -1,5 +1,6 @@
 package com.example.android.mymovieapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,9 +19,8 @@ public class ImageAdapter extends ArrayAdapter {
     private Context ctx;
     private LayoutInflater inflater;
 
-    public ImageAdapter(Context context,List<String> images)
+    public ImageAdapter(Activity context, List<String> images)
     {
-
         super(context, R.layout.image_grid);
 
         this.ctx = context;
@@ -32,18 +32,6 @@ public class ImageAdapter extends ArrayAdapter {
         }
         inflater = LayoutInflater.from(context);
     }
-
-    // Call this method whenever new data is to be added to existing list.
-//    public void updateImageList(List<String> newImagelist) {
-//
-//        if(this.imageUrl != null){
-//            this.imageUrl.addAll(newImagelist);
-//        }else{
-//            this.imageUrl = newImagelist;
-//        }
-//
-//        notifyDataSetChanged();
-//    }
 
     @Override
     public Object getItem(int position)
@@ -61,8 +49,6 @@ public class ImageAdapter extends ArrayAdapter {
     public View getView(int position, View convertView, ViewGroup parent)
     {
         ViewHolder holder;
-
-        Log.v("LOG","calling getview for picasso"+position);
 
         if (null == convertView) {
             convertView = inflater.inflate(R.layout.image_grid, parent, false);
