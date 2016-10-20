@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -59,25 +58,19 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+//    public void RefreshData(List<String> data)
+//    {
+//        posters=new ArrayList<String>(data);
+//        movieAdapter.notifyDataSetChanged();
+//    }
 
-        switch(item.getItemId())
-        {
-            case R.id.action_refresh:
-                UpdateScreen();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        return true;
-    }
-
-    public void UpdateScreen(){
+    public void UpdateScreen()
+    {
         FetchDetails movieFetch=new FetchDetails();
         SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sort_order=pref.getString("sort_order","Most_popular");
+        String sort_order=pref.getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_default));
         movieFetch.execute(sort_order);
+        Log.v("LOG for preference","Preference is  "+sort_order);
     }
 
     @Override
@@ -86,9 +79,38 @@ public class MainActivityFragment extends Fragment {
         UpdateScreen();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     public class FetchDetails extends AsyncTask<String, Void, List<String>> {
 
         private final String LOG_TAG=FetchDetails.class.getSimpleName();
+
+        private String sorting(String option)
+        {
+            String sort;
+            if (getString(R.string.pref_sort_popular).equals(option)) {
+                sort="popularity.desc";
+            } else {
+                sort="vote_average.desc";
+            }
+            return sort;
+        }
+
+        private List<String> getdataFromJson(String json_string)throws JSONException
+        {
+            JSONObject jsonObject=new JSONObject(json_string);
+            JSONArray jsonArray=jsonObject.getJSONArray("results");
+
+            for (int i=0;i<jsonArray.length();i++)
+            {
+                JSONObject movie_list=jsonArray.getJSONObject(i);
+                posters.add("http://image.tmdb.org/t/p/w185"+ movie_list.getString("poster_path"));
+            }
+            return posters;
+        }
 
         @Override
         protected List<String> doInBackground(String... params) {
@@ -101,7 +123,10 @@ public class MainActivityFragment extends Fragment {
             BufferedReader reader=null;
             String json_string=null;
 
-            String sort_order="popularity.desc";
+            SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String sort=pref.getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_default));
+
+            String sort_order=sorting(sort);
             String language="en-US";
 
             try
@@ -165,7 +190,6 @@ public class MainActivityFragment extends Fragment {
                     }catch (final IOException e)
                     {
                         Log.e(LOG_TAG,"error closing stream",e);
-
                     }
                 }
             }
@@ -178,23 +202,12 @@ public class MainActivityFragment extends Fragment {
             return null;
         }
 
-        private List<String> getdataFromJson(String json_string)throws JSONException
-        {
-            JSONObject jsonObject=new JSONObject(json_string);
-            JSONArray jsonArray=jsonObject.getJSONArray("results");
-
-            for (int i=0;i<jsonArray.length();i++)
-            {
-                JSONObject movie_list=jsonArray.getJSONObject(i);
-                posters.add("http://image.tmdb.org/t/p/w185"+ movie_list.getString("poster_path"));
-            }
-            return posters;
-        }
-
         @Override
         protected void onPostExecute(List<String> result)
         {
             super.onPostExecute(result);
+            movieAdapter.clear();
+            movieAdapter.notifyDataSetChanged();
             for (String r:result)
             {
                 movieAdapter.add(r);

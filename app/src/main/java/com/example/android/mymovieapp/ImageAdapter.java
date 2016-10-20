@@ -2,7 +2,6 @@ package com.example.android.mymovieapp;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,17 +21,10 @@ public class ImageAdapter extends ArrayAdapter {
     public ImageAdapter(Activity context, List<String> images)
     {
         super(context, R.layout.image_grid);
-
         this.ctx = context;
         this.imageUrl=images;
-
-        for (String i:images) {
-            Log.v("LOG_TAG","result from adapter " + i);
-
-        }
         inflater = LayoutInflater.from(context);
     }
-
     @Override
     public Object getItem(int position)
     {
