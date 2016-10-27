@@ -37,6 +37,10 @@ public class ImageAdapter extends ArrayAdapter {
         return position;
     }
 
+    public void ClearArray(){
+        imageUrl.clear();
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
@@ -58,6 +62,7 @@ public class ImageAdapter extends ArrayAdapter {
 
         return convertView;
     }
+
     static class ViewHolder {
         ImageView imageView;
     }

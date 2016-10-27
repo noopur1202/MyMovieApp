@@ -9,6 +9,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -37,13 +40,26 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        inflater.inflate(R.menu.menu_fragment,menu);
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         posters = new ArrayList<String>();
         movieAdapter = new ImageAdapter(getActivity(),posters);
-        gv = (GridView) rootView.findViewById(R.id.grid_fragment);
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        gv = (GridView) rootView.findViewById(R.id.fragment);
         gv.setAdapter(movieAdapter);
 
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -58,19 +74,35 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
-//    public void RefreshData(List<String> data)
-//    {
-//        posters=new ArrayList<String>(data);
-//        movieAdapter.notifyDataSetChanged();
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        if (id == R.id.action_refresh)
+        {
+           movieAdapter.clear();
+            UpdateScreen();
+            Log.v("Log for refresh button","Refresh button pressed");
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     public void UpdateScreen()
     {
-        FetchDetails movieFetch=new FetchDetails();
+        String sort;
         SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sort_order=pref.getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_default));
-        movieFetch.execute(sort_order);
-        Log.v("LOG for preference","Preference is  "+sort_order);
+        if (getString(R.string.pref_sort_popular).equals(sort_order))
+        {
+                sort="popularity.desc";
+        } else
+        {
+                sort="vote_average.desc";
+        }
+        movieAdapter.ClearArray();
+        FetchDetails movieFetch=new FetchDetails();
+        movieFetch.execute(sort);
+        Log.v("LOG for preference","Preference is  "+sort);
     }
 
     @Override
@@ -79,25 +111,9 @@ public class MainActivityFragment extends Fragment {
         UpdateScreen();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     public class FetchDetails extends AsyncTask<String, Void, List<String>> {
 
         private final String LOG_TAG=FetchDetails.class.getSimpleName();
-
-        private String sorting(String option)
-        {
-            String sort;
-            if (getString(R.string.pref_sort_popular).equals(option)) {
-                sort="popularity.desc";
-            } else {
-                sort="vote_average.desc";
-            }
-            return sort;
-        }
 
         private List<String> getdataFromJson(String json_string)throws JSONException
         {
@@ -107,7 +123,7 @@ public class MainActivityFragment extends Fragment {
             for (int i=0;i<jsonArray.length();i++)
             {
                 JSONObject movie_list=jsonArray.getJSONObject(i);
-                posters.add("http://image.tmdb.org/t/p/w185"+ movie_list.getString("poster_path"));
+                posters.add("http://image.tmdb.org/t/p/w185" + movie_list.getString("poster_path"));
             }
             return posters;
         }
@@ -122,11 +138,6 @@ public class MainActivityFragment extends Fragment {
             HttpURLConnection urlConnection=null;
             BufferedReader reader=null;
             String json_string=null;
-
-            SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String sort=pref.getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_default));
-
-            String sort_order=sorting(sort);
             String language="en-US";
 
             try
@@ -139,7 +150,7 @@ public class MainActivityFragment extends Fragment {
                 Uri buidUri=Uri.parse(BASE_URL).buildUpon()
                         .appendQueryParameter(API_KEY,BuildConfig.MOVIE_DB_API_KEY)
                         .appendQueryParameter(LANGUAGE,language)
-                        .appendQueryParameter(SORT_BY,sort_order).build();
+                        .appendQueryParameter(SORT_BY,params[0]).build();
 
                 URL url=new URL(buidUri.toString());
                 Log.v(LOG_TAG,"build uri"+url);
@@ -153,7 +164,7 @@ public class MainActivityFragment extends Fragment {
 
                 if (inputStream==null)
                 {
-                    return null;
+                    json_string= null;
                 }
 
                 reader=new BufferedReader(new InputStreamReader(inputStream));
@@ -166,7 +177,7 @@ public class MainActivityFragment extends Fragment {
 
                 if (buffer.length()==0)
                 {
-                    return null;
+                    json_string= null;
                 }
 
                 json_string=buffer.toString();
@@ -175,7 +186,7 @@ public class MainActivityFragment extends Fragment {
             catch (IOException e)
             {
                 Log.e(LOG_TAG,"error",e);
-                return null;
+                json_string= null;
             }
             finally
             {

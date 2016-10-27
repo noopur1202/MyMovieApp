@@ -16,6 +16,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new MainActivityFragment())
+                    .commit();
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.BLACK);
@@ -33,9 +39,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_settings)
         {
-            Intent intent = new Intent(this, Settings.class);
-            startActivity(intent);
+            startActivity(new Intent(this,Settings.class));
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
