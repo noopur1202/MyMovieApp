@@ -33,10 +33,10 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     ImageAdapter movieAdapter;
-    List<String> posters;
+    List<String> posters,summary,title,rating,year,duration;
     GridView gv;
 
-    public MainActivityFragment() {
+    public MainActivityFragment() {setHasOptionsMenu(true);
     }
 
     @Override
@@ -54,9 +54,13 @@ public class MainActivityFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         posters = new ArrayList<String>();
+        title=new ArrayList<String>();
+        year=new ArrayList<String>();
+        rating=new ArrayList<String>();
+        summary=new ArrayList<String>();
         movieAdapter = new ImageAdapter(getActivity(),posters);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         gv = (GridView) rootView.findViewById(R.id.fragment);
@@ -65,9 +69,22 @@ public class MainActivityFragment extends Fragment {
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
             {
+                int poster_position = (int) movieAdapter.getItemId(position);
+                String detail_poster= posters.get(poster_position);
+                String detail_movieTitle=title.get(poster_position);
+                String detail_releaseYear=year.get(poster_position);
+                String  detail_duration;
+                String detail_rating=rating.get(poster_position);
+                String detail_summary=summary.get(poster_position);
+
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra("POSTER",detail_poster);
+                intent.putExtra("TITLE",detail_movieTitle);
+                intent.putExtra("YEAR",detail_releaseYear);
+                intent.putExtra("RATING",detail_rating);
+                intent.putExtra("SUMMARY",detail_summary);
                 startActivity(intent);
             }
         });
@@ -80,7 +97,6 @@ public class MainActivityFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh)
         {
-           movieAdapter.clear();
             UpdateScreen();
             Log.v("Log for refresh button","Refresh button pressed");
         }
@@ -100,6 +116,10 @@ public class MainActivityFragment extends Fragment {
                 sort="vote_average.desc";
         }
         movieAdapter.ClearArray();
+        title.clear();
+        summary.clear();
+        rating.clear();
+        year.clear();
         FetchDetails movieFetch=new FetchDetails();
         movieFetch.execute(sort);
         Log.v("LOG for preference","Preference is  "+sort);
@@ -124,6 +144,10 @@ public class MainActivityFragment extends Fragment {
             {
                 JSONObject movie_list=jsonArray.getJSONObject(i);
                 posters.add("http://image.tmdb.org/t/p/w185" + movie_list.getString("poster_path"));
+                title.add(movie_list.getString("title"));
+                year.add(movie_list.getString("release_date"));
+                rating.add(movie_list.getString("vote_average"));
+                summary.add(movie_list.getString("overview"));
             }
             return posters;
         }
